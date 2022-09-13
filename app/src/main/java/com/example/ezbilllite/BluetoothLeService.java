@@ -75,8 +75,8 @@ public class BluetoothLeService extends Service {
             "com.example.ezbilllite.EXTRA_DATA";
     public final static String EXTRA_UUID = "com.example.ezbilllite.EXTRA_UUID";
 
-//    public final static UUID UUID_HEART_RATE_MEASUREMENT =
-//            UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
+    public final static UUID EZBILL_POWER =
+            UUID.fromString(SampleGattAttributes.POWER);
 
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
@@ -153,6 +153,7 @@ public class BluetoothLeService extends Service {
 //            intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
 //        } else {
 //            // For all other profiles, writes the data formatted in HEX.
+        if (EZBILL_POWER.equals(characteristic.getUuid())) {
             final byte[] data = characteristic.getValue();
             if (data != null && data.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
@@ -160,7 +161,7 @@ public class BluetoothLeService extends Service {
                     stringBuilder.append(String.format("%02X ", byteChar));
                 intent.putExtra(EXTRA_DATA, "Power level: " + stringBuilder.toString());
             }
-//        }
+        }
         sendBroadcast(intent);
     }
 

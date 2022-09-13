@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void stopScan() {
-        btn_Scan.setText("Scan Again");
+        btn_Scan.setText("Scan");
 
         stop();
     }
@@ -316,14 +316,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
 
                     final int new_rssi = rssi;
-//                    if (rssi > signalStrength) {
+                    if (rssi > signalStrength) {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
                                 addDevice(device, new_rssi);
                             }
                         });
-//                    }
+                    }
                 }
             };
 

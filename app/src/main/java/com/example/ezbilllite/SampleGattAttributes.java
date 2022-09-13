@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class SampleGattAttributes {
     private static HashMap<String, String> attributes = new HashMap();
     public static String EZBILL_SERVICE = "0000f00d-1212-efde-1523-785fef13d123";
-    public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
+    public static String POWER = "00000010-1212-efde-1523-785fef13d123";
 
     static {
         // Sample Services.
