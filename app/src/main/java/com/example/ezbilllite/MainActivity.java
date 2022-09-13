@@ -1,5 +1,6 @@
 package com.example.ezbilllite;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -33,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,17 +71,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
 
-    public final static String ACTION_GATT_CONNECTED =
-            "com.example.ezbilllite.ACTION_GATT_CONNECTED";
-    public final static String ACTION_GATT_DISCONNECTED =
-            "com.example.ezbilllite.ACTION_GATT_DISCONNECTED";
-    public final static String ACTION_GATT_SERVICES_DISCOVERED =
-            "com.example.ezbilllite.ACTION_GATT_SERVICES_DISCOVERED";
-    public final static String ACTION_DATA_AVAILABLE =
-            "com.example.ezbilllite.ACTION_DATA_AVAILABLE";
-    public final static String EXTRA_DATA =
-            "com.example.ezbilllite.EXTRA_DATA";
-    public final static String EXTRA_UUID = "com.example.ezbilllite.EXTRA_UUID";
+//    public final static String ACTION_GATT_CONNECTED =
+//            "com.example.ezbilllite.ACTION_GATT_CONNECTED";
+//    public final static String ACTION_GATT_DISCONNECTED =
+//            "com.example.ezbilllite.ACTION_GATT_DISCONNECTED";
+//    public final static String ACTION_GATT_SERVICES_DISCOVERED =
+//            "com.example.ezbilllite.ACTION_GATT_SERVICES_DISCOVERED";
+//    public final static String ACTION_DATA_AVAILABLE =
+//            "com.example.ezbilllite.ACTION_DATA_AVAILABLE";
+//    public final static String EXTRA_DATA =
+//            "com.example.ezbilllite.EXTRA_DATA";
+//    public final static String EXTRA_UUID = "com.example.ezbilllite.EXTRA_UUID";
 
 
 
@@ -95,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "BLE Not Supported", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
 
         final BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
@@ -312,14 +316,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
 
                     final int new_rssi = rssi;
-                    if (rssi > signalStrength) {
+//                    if (rssi > signalStrength) {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
                                 addDevice(device, new_rssi);
                             }
                         });
-                    }
+//                    }
                 }
             };
 

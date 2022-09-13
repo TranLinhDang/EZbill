@@ -52,16 +52,28 @@ public class BluetoothLeService extends Service {
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
 
+//    public final static String ACTION_GATT_CONNECTED =
+//            "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
+//    public final static String ACTION_GATT_DISCONNECTED =
+//            "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";
+//    public final static String ACTION_GATT_SERVICES_DISCOVERED =
+//            "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
+//    public final static String ACTION_DATA_AVAILABLE =
+//            "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
+//    public final static String EXTRA_DATA =
+//            "com.example.bluetooth.le.EXTRA_DATA";
+
     public final static String ACTION_GATT_CONNECTED =
-            "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
+            "com.example.ezbilllite.ACTION_GATT_CONNECTED";
     public final static String ACTION_GATT_DISCONNECTED =
-            "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";
+            "com.example.ezbilllite.ACTION_GATT_DISCONNECTED";
     public final static String ACTION_GATT_SERVICES_DISCOVERED =
-            "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
+            "com.example.ezbilllite.ACTION_GATT_SERVICES_DISCOVERED";
     public final static String ACTION_DATA_AVAILABLE =
-            "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
+            "com.example.ezbilllite.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA =
-            "com.example.bluetooth.le.EXTRA_DATA";
+            "com.example.ezbilllite.EXTRA_DATA";
+    public final static String EXTRA_UUID = "com.example.ezbilllite.EXTRA_UUID";
 
 //    public final static UUID UUID_HEART_RATE_MEASUREMENT =
 //            UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
@@ -141,13 +153,13 @@ public class BluetoothLeService extends Service {
 //            intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
 //        } else {
 //            // For all other profiles, writes the data formatted in HEX.
-//            final byte[] data = characteristic.getValue();
-//            if (data != null && data.length > 0) {
-//                final StringBuilder stringBuilder = new StringBuilder(data.length);
-//                for(byte byteChar : data)
-//                    stringBuilder.append(String.format("%02X ", byteChar));
-//                intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
-//            }
+            final byte[] data = characteristic.getValue();
+            if (data != null && data.length > 0) {
+                final StringBuilder stringBuilder = new StringBuilder(data.length);
+                for(byte byteChar : data)
+                    stringBuilder.append(String.format("%02X ", byteChar));
+                intent.putExtra(EXTRA_DATA, "Power level: " + stringBuilder.toString());
+            }
 //        }
         sendBroadcast(intent);
     }
@@ -280,6 +292,17 @@ public class BluetoothLeService extends Service {
             return;
         }
         mBluetoothGatt.readCharacteristic(characteristic);
+    }
+
+    public void writeCharacteristic(BluetoothGattCharacteristic characteristic, byte[] power) {
+        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            return;
+        }
+        characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        characteristic.setValue(power);
+
+        mBluetoothGatt.writeCharacteristic(characteristic);
     }
 
     /**
