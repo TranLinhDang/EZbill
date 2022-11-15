@@ -1,0 +1,120 @@
+@startuml
+class com.example.ezbilllite.DeviceControlActivity {
+- TextView mDataField
+- String mDeviceName
+- String mDeviceAddress
+- ExpandableListView mGattServicesList
+- BluetoothLeService mBluetoothLeService
+- ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics
+- BluetoothGattCharacteristic mNotifyCharacteristic
+- ServiceConnection mServiceConnection
++ BroadcastReceiver mGattUpdateReceiver
+- void updateConnectionState(int)
+- void displayData(String)
++ void setPowerLevel(String)
+- void displayGattServices(List<BluetoothGattService>)
+}
+class com.example.ezbilllite.DBHandlerSensor {
+- {static} String DB_NAME
+- {static} int DB_VERSION
+- {static} String TABLE_NAME
+- {static} String ID_COL
+- {static} String NAME_COL
++ void onCreate(SQLiteDatabase)
++ void addNewSensor(String)
++ void onUpgrade(SQLiteDatabase,int,int)
+}
+class com.example.ezbilllite.DBHandlerPower {
+- {static} String DB_NAME
+- {static} int DB_VERSION
+- {static} String TABLE_NAME
+- {static} String ID_COL
+- {static} String USER_COL
+- {static} String DATE_COL
+- {static} String POWER_COL
++ void onCreate(SQLiteDatabase)
++ void addNewUsage(String,String,String)
++ void onUpgrade(SQLiteDatabase,int,int)
+}
+class com.example.ezbilllite.ListAdapter_BTLE_Devices {
+~ Activity activity
+~ int layoutResourceID
+~ ArrayList<BTLE_Device> devices
++ View getView(int,View,ViewGroup)
+}
+class com.example.ezbilllite.BTLE_Device {
+- BluetoothDevice bluetoothDevice
+- int rssi
++ String getAddress()
++ String getName()
++ void setRSSI(int)
++ int getRSSI()
+}
+class com.example.ezbilllite.MainActivity {
++ {static} int BTLE_SERVICES
+- BluetoothAdapter mBluetoothAdapter
+- BluetoothLeScanner mBluetoothLeScanner
+- BluetoothGatt mBluetoothGatt
+- ListAdapter_BTLE_Devices adapter
+- int mConnectionState
+- DBHandlerSensor dbHandlerSensor
+- BluetoothAdapter.LeScanCallback mLeScanCallback
++ void addDevice(BluetoothDevice,int)
++ void startScan()
++ void stopScan()
++ boolean isScanning()
+- void scanLeDevice(boolean)
+}
+
+class com.example.ezbilllite.PowerLevel {
+~ TextView receiverPower
+~ TextView receiverTime
+~ TextView userEmailName
+~ double powerNum
+~ double powerKw
+- DBHandlerPower dbHandlerPower
+~ BarChart barChart
+~ ArrayList barEntriesArrayList
++ void getBarEntries()
+}
+class com.example.ezbilllite.Login {
+~ EditText mEmail
+~ Button mLoginBtn
+~ TextView mCreateAccount
+~ FirebaseAuth fAuth
+}
+class com.example.ezbilllite.Register {
+~ EditText mFullName
+~ Button mRegisterBtn
+~ TextView mLoginBtn
+~ FirebaseAuth fAuth
+- void sendEmailVerification()
+}
+class com.example.ezbilllite.BluetoothLeService {
+- BluetoothManager mBluetoothManager
+- BluetoothAdapter mBluetoothAdapter
+- String mBluetoothDeviceAddress
+- BluetoothGatt mBluetoothGatt
+- BluetoothGattCallback mGattCallback
+- void broadcastUpdate(String)
+- void broadcastUpdate(String,BluetoothGattCharacteristic)
++ boolean connect(String)
++ void disconnect()
++ void close()
++ void readCharacteristic(BluetoothGattCharacteristic)
++ void writeCharacteristic(BluetoothGattCharacteristic,byte[])
++ void setCharacteristicNotification(BluetoothGattCharacteristic,boolean)
++ List<BluetoothGattService> getSupportedGattServices()
+}
+
+
+
+android.app.Activity <|-- com.example.ezbilllite.DeviceControlActivity
+android.database.sqlite.SQLiteOpenHelper <|-- com.example.ezbilllite.DBHandlerSensor
+android.database.sqlite.SQLiteOpenHelper <|-- com.example.ezbilllite.DBHandlerPower
+androidx.appcompat.app.AppCompatActivity <|-- com.example.ezbilllite.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.example.ezbilllite.PowerLevel
+androidx.appcompat.app.AppCompatActivity <|-- com.example.ezbilllite.Login
+androidx.appcompat.app.AppCompatActivity <|-- com.example.ezbilllite.Register
+android.app.Service <|-- com.example.ezbilllite.BluetoothLeService
+@enduml

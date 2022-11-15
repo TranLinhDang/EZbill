@@ -30,7 +30,9 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
@@ -38,9 +40,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * For a given BLE device, this Activity provides the user interface to connect, display data,
@@ -127,11 +136,13 @@ public class DeviceControlActivity extends Activity {
                 @Override
                 public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                             int childPosition, long id) {
-                    String name = mGattCharacteristics.get(groupPosition).get(childPosition).getUuid().toString();
-                    System.out.println(name + "Clicked");
+//                    String name = mGattCharacteristics.get(groupPosition).get(childPosition).getUuid().toString();
+//                    System.out.println(name + "Clicked");
 
-                    Toast.makeText(getApplicationContext() ," Clicked", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext() ," Clicked", Toast.LENGTH_LONG).show();
 //                    Toast.makeText(name + " clicked");
+                    long startTime = SystemClock.elapsedRealtimeNanos();
+
 
                     final String[] listItems = new String[]{"low", "medium", "high"};
 
@@ -141,6 +152,7 @@ public class DeviceControlActivity extends Activity {
                         final int charaProp = characteristic.getProperties();
 
                     if ((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0) {
+
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -203,8 +215,23 @@ public class DeviceControlActivity extends Activity {
                                     characteristic, true);
 //                            mBluetoothLeService.readCharacteristic(characteristic);
 //                            mDataField.setText(String.format(String.format("%02X", characteristic.getValue().toString())));
+                            long endTime = SystemClock.elapsedRealtime();
+                            long elapsedSecond = endTime - startTime;
+                            long convert = TimeUnit.SECONDS.convert(elapsedSecond, TimeUnit.NANOSECONDS);
+//                            long convert1 = TimeUnit.toSeconds(elapsedSecond);
+
+                            double seconds = (double)elapsedSecond / 1_000_000_000.0;
+
+//                            mDataField.append(" " + convert1 + " s");
+
+//                            Intent intent = new Intent(getApplicationContext(), DashBoadActivity.class);
+//                            intent.putExtra("power_message", intent.getStringExtra(BluetoothLeService.EXTRA_DATA) );
+//                            startActivity(intent);
 
                         }
+
+
+//                        double elapsedSecond = startTime -
                         return true;
                     }
                     return false;
@@ -220,7 +247,33 @@ public class DeviceControlActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gatt_services_characteristics);
+        setContentView(R.layout.nav_gatt_services_characteristics);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.nav_home){
+                    Toast.makeText(DeviceControlActivity.this, "HOME", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(getApplicationContext(), ActivityServices.class);
+                    startActivity(i);
+                }
+
+                if (item.getItemId() == R.id.nav_scan){
+                    Toast.makeText(DeviceControlActivity.this, "HOME", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
+                }
+
+                DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+
+
+
+
 
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
